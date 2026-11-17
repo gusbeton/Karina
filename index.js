@@ -277,19 +277,37 @@ client.on('interactionCreate', async interaction => {
     }
   }
 
-  let desc = '';
-  if (added.length) desc += `✅ **Added:** ${added.join(', ')}\n`;
-  if (removed.length) desc += `❌ **Removed:** ${removed.join(', ')}`;
-  if (!desc) desc = '⚠️ Gagal mengubah role, hubungi ADMIN.';
+  const embed = new EmbedBuilder()
+    .setAuthor({
+      name: 'BETLEHEM',
+      iconURL: 'https://media.discordapp.net/attachments/1487590787284734143/1492050545219862598/bthl.png'
+    })
+    .setThumbnail(interaction.user.displayAvatarURL())
+    .setFooter({
+      text: 'Copyright ©2018 - BTHL | BETLEHEM',
+      iconURL: interaction.guild.iconURL() || undefined
+    })
+    .setTimestamp();
+
+  if (!added.length && !removed.length) {
+    embed
+      .setColor('#ED4245')
+      .setTitle('⚠️ Gagal Mengubah Role')
+      .setDescription('> Terjadi kendala saat memproses role kamu.\n> Silahkan hubungi **ADMIN** ya.');
+  } else {
+    let desc = `> Hai **${interaction.member.displayName}**, role game kamu berhasil diperbarui! 🎮\n\n`;
+    if (added.length) desc += `**🟢 Role Ditambahkan**\n> ${added.join('\n> ')}\n\n`;
+    if (removed.length) desc += `**🔴 Role Dilepas**\n> ${removed.join('\n> ')}\n\n`;
+    desc += '*Pilih game yang sama lagi untuk melepas role.*';
+
+    embed
+      .setColor(added.length ? '#FFD700' : '#ED4245')
+      .setTitle('✨ ROLE UPDATED')
+      .setDescription(desc);
+  }
 
   await interaction.reply({
-    embeds: [
-      new EmbedBuilder()
-        .setColor('#57F287')
-        .setTitle('Role Updated')
-        .setDescription(desc)
-        .setFooter({ text: 'BETLEHEM • Role System' })
-    ],
+    embeds: [embed],
     flags: MessageFlags.Ephemeral
   }).catch(() => {});
 });
